@@ -1,11 +1,11 @@
-import ReactDOM from 'react-dom'
-import { BrowserRouter } from 'react-router-dom'
+import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
 import {
   ApolloClient,
   ApolloProvider,
 } from '@apollo/client';
-import { apolloCache } from './apolloClient'
-import { App } from './App'
+import { apolloCache } from './apolloClient';
+import App from './App';
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000',
@@ -13,7 +13,7 @@ const client = new ApolloClient({
   credentials: 'same-origin',
 });
 
-delete window.__INITIAL_APOLLO_STATE__
+delete window.__INITIAL_APOLLO_STATE__;
 
 ReactDOM.hydrate(
   <ApolloProvider client={client}>
@@ -21,5 +21,5 @@ ReactDOM.hydrate(
       <App />
     </BrowserRouter>
   </ApolloProvider>,
-  document.getElementById('app')
-)
+  document.getElementById('app'),
+);

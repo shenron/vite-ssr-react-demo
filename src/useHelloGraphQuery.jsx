@@ -1,17 +1,14 @@
-import { gql, useQuery, useApolloClient } from '@apollo/client';
-import { useEffect } from 'react'
+import { gql, useQuery } from '@apollo/client';
+import { useEffect } from 'react';
 import { apolloCache } from './apolloClient';
 
-
 export default function () {
-  useEffect(() => {
-    return () => {
-      apolloCache.evict({
-        id: 'ROOT_QUERY',
-        fieldName: 'hello'
-      })
-    }
-  }, [])
+  useEffect(() => () => {
+    apolloCache.evict({
+      id: 'ROOT_QUERY',
+      fieldName: 'hello',
+    });
+  }, []);
 
   const GET_HELLO = gql`query Hello { hello }`;
 
@@ -28,4 +25,3 @@ export default function () {
     getGraphHello,
   };
 }
-

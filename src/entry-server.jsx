@@ -1,15 +1,9 @@
-import ReactDOMServer from 'react-dom/server'
-import { getDataFromTree } from "@apollo/client/react/ssr";
-import { StaticRouter } from 'react-router-dom'
-import {
-  ApolloClient,
-  ApolloProvider,
-  createHttpLink,
-  InMemoryCache,
-} from '@apollo/client';
-import { App } from './App'
+import { getDataFromTree } from '@apollo/client/react/ssr';
+import { StaticRouter } from 'react-router-dom';
+import { ApolloClient, ApolloProvider, createHttpLink } from '@apollo/client';
+import App from './App';
 
-export function render(url, context) {
+export default function render(url, context) {
   const {
     apolloStore,
     ...ctx
@@ -17,7 +11,7 @@ export function render(url, context) {
 
   const client = new ApolloClient({
     link: createHttpLink({
-      uri: `http://localhost:4000/graph`,
+      uri: 'http://localhost:4000/graph',
       credentials: 'same-origin',
     }),
     ssrMode: true,
@@ -25,12 +19,11 @@ export function render(url, context) {
     credentials: 'same-origin',
   });
 
-
   return getDataFromTree(
     <ApolloProvider client={client}>
       <StaticRouter location={url} context={ctx}>
         <App />
       </StaticRouter>
-    </ApolloProvider>
-  )
+    </ApolloProvider>,
+  );
 }

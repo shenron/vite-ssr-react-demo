@@ -1,8 +1,6 @@
-import {
-  ApolloClient,
-  InMemoryCache,
-} from '@apollo/client';
+import { InMemoryCache } from '@apollo/client';
 
-const apolloCache = new InMemoryCache()
+const apolloCache = new InMemoryCache();
 
-export { apolloCache }
+// eslint-disable-next-line import/prefer-default-export
+export { apolloCache };

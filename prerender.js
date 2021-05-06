@@ -2,15 +2,15 @@
 // run `npm run generate` and then `dist/static` can be served as a static site.
 
 const serialize = require('serialize-javascript');
-const fs = require('fs')
-const path = require('path')
+const fs = require('fs');
+const path = require('path');
 const fetch = require('node-fetch');
-const {InMemoryCache} = require('@apollo/client');
+const { InMemoryCache } = require('@apollo/client');
 
-const toAbsolute = (p) => path.resolve(__dirname, p)
+const toAbsolute = (p) => path.resolve(__dirname, p);
 
-const template = fs.readFileSync(toAbsolute('dist/static/index.html'), 'utf-8')
-const { render } = require('./dist/server/entry-server.js')
+const template = fs.readFileSync(toAbsolute('dist/static/index.html'), 'utf-8');
+const render = require('./dist/server/entry-server.js').default;
 
 global.fetch = fetch;
 
@@ -34,24 +34,26 @@ const renderState = (store, windowKey) => {
 const routesToPrerender = fs
   .readdirSync(toAbsolute('src/pages'))
   .map((file) => {
-    const name = file.replace(/\.jsx$/, '').toLowerCase()
-    return name === 'home' ? `/` : `/${name}`
-  })
+    const name = file.replace(/\.jsx$/, '').toLowerCase();
+    return name === 'home' ? '/' : `/${name}`;
+  });
 
-;(async () => {
+(async () => {
   // pre-render each route...
-  for (const url of routesToPrerender) {
+  routesToPrerender.forEach(async (url) => {
     const context = {
-      apolloStore: new InMemoryCache()
-    }
-    const appHtml = await render(url, context)
+      apolloStore: new InMemoryCache(),
+    };
+
+    console.log(render);
+    const appHtml = await render(url, context);
 
     const html = template
-      .replace(`<!--app-html-->`, appHtml)
-        .replace(`<!--apollo-state-->`, renderState(context.apolloStore.extract(), '__INITIAL_APOLLO_STATE__'))
+      .replace('<!--app-html-->', appHtml)
+      .replace('<!--apollo-state-->', renderState(context.apolloStore.extract(), '__INITIAL_APOLLO_STATE__'));
 
-    const filePath = `dist/static${url === '/' ? '/index' : url}.html`
-    fs.writeFileSync(toAbsolute(filePath), html)
-    console.log('pre-rendered:', filePath)
-  }
-})()
+    const filePath = `dist/static${url === '/' ? '/index' : url}.html`;
+    fs.writeFileSync(toAbsolute(filePath), html);
+    console.log('pre-rendered:', filePath);
+  });
+})();
