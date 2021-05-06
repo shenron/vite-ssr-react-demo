@@ -60,11 +60,6 @@ async function createServer(
     app.use(vite.middlewares)
   } else {
     app.use(require('compression')())
-    // app.use(
-    //   require('serve-static')(resolve('dist/client'), {
-    //     index: false
-    //   })
-    // )
     app.use('/assets', express.static(path.join(__dirname, './dist/client/assets')));
     app.use(
       '/favicon.ico',
