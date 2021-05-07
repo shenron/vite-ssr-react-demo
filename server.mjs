@@ -1,12 +1,17 @@
 // @ts-check
-const serialize = require('serialize-javascript');
-const fs = require('fs');
-const path = require('path');
-const express = require('express');
-const fetch = require('node-fetch');
-const { InMemoryCache } = require('@apollo/client');
+import serialize from 'serialize-javascript';
+import fs from 'fs';
+import path from 'path';
+import express from 'express';
+import fetch from 'node-fetch';
+import compression from 'compression';
+import { InMemoryCache } from '@apollo/client';
+import { fileURLToPath } from 'url'
 
 global.fetch = fetch;
+
+// we need to change up how __dirname is used for ES6 purposes
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const isTest = process.env.NODE_ENV === 'test' || !!process.env.VITE_TEST_BUILD;
 
@@ -26,7 +31,7 @@ const renderState = (store, windowKey) => {
     : '';
 };
 
-async function createServer(
+export default async function createServer(
   root = process.cwd(),
   isProd = process.env.NODE_ENV === 'production',
 ) {
@@ -44,7 +49,7 @@ async function createServer(
   let vite;
   if (!isProd) {
     // eslint-disable-next-line global-require
-    vite = await require('vite').createServer({
+    vite = await (await import('vite')).createServer({
       root,
       logLevel: isTest ? 'error' : 'info',
       server: {
@@ -60,8 +65,7 @@ async function createServer(
     // use vite's connect instance as middleware
     app.use(vite.middlewares);
   } else {
-    // eslint-disable-next-line global-require
-    app.use(require('compression')());
+    app.use(compression());
     app.use('/assets', express.static(path.join(__dirname, './dist/client/assets')));
     app.use(
       '/favicon.ico',
@@ -88,7 +92,7 @@ async function createServer(
       } else {
         template = indexProd;
         // eslint-disable-next-line global-require
-        render = require('./dist/server/entry-server.js').default;
+        render = (await (import ('./dist/server/entry-server.js'))).default.default;
       }
 
       const appHtml = await render(url, context);
@@ -122,6 +126,3 @@ if (!isTest) {
     console.log('http://localhost:3111');
   }));
 }
-
-// for test use
-exports.createServer = createServer;
