@@ -6,7 +6,7 @@ import express from 'express';
 import fetch from 'node-fetch';
 import compression from 'compression';
 import { InMemoryCache } from '@apollo/client';
-import { fileURLToPath } from 'url'
+import { fileURLToPath } from 'url';
 
 global.fetch = fetch;
 
