@@ -7,6 +7,26 @@ import fetch from 'node-fetch';
 import compression from 'compression';
 import { InMemoryCache } from '@apollo/client';
 import { fileURLToPath } from 'url';
+import { ApolloServer, gql } from 'apollo-server-express';
+
+async function startApolloServer(app) {
+  // Construct a schema, using GraphQL schema language
+  const typeDefs = gql`
+    type Query {
+      hello: String
+    }
+  `;
+
+  // Provide resolver functions for your schema fields
+  const resolvers = {
+    Query: {
+      hello: () => 'Hello world!',
+    },
+  };
+
+  const server = new ApolloServer({ typeDefs, resolvers });
+  server.applyMiddleware({ app });
+}
 
 global.fetch = fetch;
 
@@ -42,6 +62,7 @@ export default async function createServer(
     : '';
 
   const app = express();
+  startApolloServer(app);
 
   /**
    * @type {import('vite').ViteDevServer}
@@ -124,5 +145,6 @@ export default async function createServer(
 if (!isTest) {
   createServer().then(({ app }) => app.listen(3111, () => {
     console.log('http://localhost:3111');
+    console.log(`🚀 Server ready at http://localhost:3111/graphql`);
   }));
 }

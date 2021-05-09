@@ -11,7 +11,7 @@ export default function render(url, context) {
 
   const client = new ApolloClient({
     link: createHttpLink({
-      uri: 'http://localhost:4000/graph',
+      uri: 'http://localhost:3111/graphql',
       credentials: 'same-origin',
     }),
     ssrMode: true,

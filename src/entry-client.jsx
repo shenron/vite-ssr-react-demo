@@ -8,7 +8,7 @@ import { apolloCache } from './apolloClient';
 import App from './App';
 
 const client = new ApolloClient({
-  uri: 'http://localhost:4000',
+  uri: '/graphql',
   cache: apolloCache.restore(window.__INITIAL_APOLLO_STATE__),
   credentials: 'same-origin',
 });
